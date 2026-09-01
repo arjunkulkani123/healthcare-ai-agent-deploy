@@ -56,11 +56,13 @@ def extract_facts_with_llm(text: str) -> dict:
     """
     api_key = _get_api_key()
     if not api_key:
+        print("[llm_nlu] No API key found in environment or st.secrets.")
         return None
 
     try:
         import anthropic
     except ImportError:
+        print("[llm_nlu] anthropic package is not installed.")
         return None
 
     try:
@@ -72,33 +74,27 @@ def extract_facts_with_llm(text: str) -> dict:
             messages=[{"role": "user", "content": text}],
         )
         raw = response.content[0].text.strip()
-        # Defensive: strip markdown fences if the model adds them anyway
         if raw.startswith("```"):
             raw = raw.strip("`")
             if raw.startswith("json"):
                 raw = raw[4:]
         parsed = json.loads(raw)
 
-        # Normalize to always have all three top-level keys
         return {
             "expert_facts": parsed.get("expert_facts", {}),
             "scheduling_overrides": parsed.get("scheduling_overrides", {}),
             "assumptions": parsed.get("assumptions", []),
         }
-    except Exception:
-        # Any failure (bad key, rate limit, malformed JSON, network issue)
-        # -> return None, caller falls back to regex NLU. The app should
-        # never crash just because the LLM had a bad moment.
+    except Exception as e:
+        print(f"[llm_nlu] LLM call failed, falling back to regex NLU. Reason: {type(e).__name__}: {e}")
         return None
 
 
 def _get_api_key() -> str:
-    # Local development
     key = os.environ.get("ANTHROPIC_API_KEY")
     if key:
         return key
 
-    # Streamlit Cloud secrets
     try:
         import streamlit as st
         return st.secrets.get("ANTHROPIC_API_KEY")
