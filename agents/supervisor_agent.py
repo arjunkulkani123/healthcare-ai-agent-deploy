@@ -62,11 +62,11 @@ NODE_MAP = {
 def handle_request(user_text: str) -> dict:
     trace = []
 
-    nlu_result = extract_facts_with_llm(user_text)
+    nlu_result, llm_error = extract_facts_with_llm(user_text)
     nlu_method = "LLM (Claude)"
     if nlu_result is None:
         nlu_result = extract_facts_from_text(user_text)
-        nlu_method = "regex pattern-matching (LLM unavailable -- see app logs for why)"
+        nlu_method = f"regex pattern-matching (LLM unavailable: {llm_error})"
 
     expert_facts = nlu_result["expert_facts"]
     overrides = nlu_result["scheduling_overrides"]
