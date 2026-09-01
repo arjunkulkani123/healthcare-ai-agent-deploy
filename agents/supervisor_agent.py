@@ -26,6 +26,7 @@ sys.path.insert(0, os.path.join(_THIS_DIR, "..", "ai", "csp"))
 sys.path.insert(0, os.path.join(_THIS_DIR, "..", "ai", "search"))
 
 from nlu import extract_facts_from_text                          # noqa: E402
+from llm_nlu import extract_facts_with_llm                        # noqa: E402
 from healthcare_expert import assess                              # noqa: E402
 from domain import PatientRequest, build_domains                  # noqa: E402
 from constraints import build_constraints                         # noqa: E402
@@ -72,10 +73,19 @@ def handle_request(user_text: str) -> dict:
     trace = []
 
     # ---- 1. PERCEIVE: parse free text into structured facts ----
-    nlu_result = extract_facts_from_text(user_text)
+    # Try the real LLM first (understands genuinely varied phrasing);
+    # fall back to the regex-based NLU if no API key is configured or
+    # the call fails for any reason -- the agent should never break
+    # just because the LLM layer is unavailable.
+    nlu_result = extract_facts_with_llm(user_text)
+    nlu_method = "LLM (Claude)"
+    if nlu_result is None:
+        nlu_result = extract_facts_from_text(user_text)
+        nlu_method = "regex pattern-matching (no API key configured)"
+
     expert_facts = nlu_result["expert_facts"]
     overrides = nlu_result["scheduling_overrides"]
-    trace.append(f"Perceived request and extracted facts (NLU): {expert_facts}")
+    trace.append(f"Perceived request and extracted facts via {nlu_method}: {expert_facts}")
     for a in nlu_result["assumptions"]:
         trace.append(f"Assumption made: {a}")
 
