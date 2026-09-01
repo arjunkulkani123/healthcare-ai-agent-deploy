@@ -85,10 +85,13 @@ def extract_facts_with_llm(text: str) -> dict:
             "scheduling_overrides": parsed.get("scheduling_overrides", {}),
             "assumptions": parsed.get("assumptions", []),
         }
-    except Exception:
+    except Exception as e:
         # Any failure (bad key, rate limit, malformed JSON, network issue)
         # -> return None, caller falls back to regex NLU. The app should
-        # never crash just because the LLM had a bad moment.
+        # never crash just because the LLM had a bad moment -- but we
+        # DO print the real reason so it's visible in deployment logs
+        # instead of silently and confusingly always blaming "no API key".
+        print(f"[llm_nlu] LLM call failed, falling back to regex NLU. Reason: {type(e).__name__}: {e}")
         return None
 
 

@@ -81,7 +81,7 @@ def handle_request(user_text: str) -> dict:
     nlu_method = "LLM (Claude)"
     if nlu_result is None:
         nlu_result = extract_facts_from_text(user_text)
-        nlu_method = "regex pattern-matching (no API key configured)"
+        nlu_method = "regex pattern-matching (LLM unavailable -- see app logs for why)"
 
     expert_facts = nlu_result["expert_facts"]
     overrides = nlu_result["scheduling_overrides"]
