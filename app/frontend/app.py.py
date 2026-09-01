@@ -55,6 +55,10 @@ st.markdown(
             border-radius: 10px;
             padding: 1.3rem 1.5rem;
             margin-bottom: 1rem;
+            color: var(--ink);
+        }
+        .result-card p, .result-card h4, .result-card li {
+            color: var(--ink) !important;
         }
         .badge {
             display: inline-block;
