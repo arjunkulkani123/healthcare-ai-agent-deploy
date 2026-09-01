@@ -49,21 +49,25 @@ Rules:
 - Output ONLY the JSON object, no markdown fences, no commentary."""
 
 
-def extract_facts_with_llm(text: str) -> dict:
+def extract_facts_with_llm(text: str) -> tuple:
     """
-    Returns the same shape as nlu.extract_facts_from_text(), or None if
-    the LLM is unavailable/fails, so the caller can fall back gracefully.
+    Returns (result_dict_or_None, error_reason_or_None).
+
+    If successful: (dict, None)
+    If it fails for any reason: (None, "a short explanation of why")
+
+    Returning the reason directly (instead of only printing to server
+    logs) means the calling UI can show it right on the page -- much
+    easier to debug than digging through deployment logs.
     """
     api_key = _get_api_key()
     if not api_key:
-        print("[llm_nlu] No API key found in environment or st.secrets.")
-        return None
+        return None, "No ANTHROPIC_API_KEY found in environment variables or st.secrets."
 
     try:
         import anthropic
     except ImportError:
-        print("[llm_nlu] anthropic package is not installed.")
-        return None
+        return None, "The 'anthropic' Python package is not installed in this environment."
 
     try:
         client = anthropic.Anthropic(api_key=api_key)
@@ -84,10 +88,9 @@ def extract_facts_with_llm(text: str) -> dict:
             "expert_facts": parsed.get("expert_facts", {}),
             "scheduling_overrides": parsed.get("scheduling_overrides", {}),
             "assumptions": parsed.get("assumptions", []),
-        }
+        }, None
     except Exception as e:
-        print(f"[llm_nlu] LLM call failed, falling back to regex NLU. Reason: {type(e).__name__}: {e}")
-        return None
+        return None, f"{type(e).__name__}: {e}"
 
 
 def _get_api_key() -> str:
@@ -108,8 +111,8 @@ if __name__ == "__main__":
         "citizen, and we're pretty broke right now -- need somewhere "
         "close by."
     )
-    result = extract_facts_with_llm(example)
+    result, error = extract_facts_with_llm(example)
     if result is None:
-        print("No API key found (or call failed) -- would fall back to regex NLU.")
+        print(f"LLM unavailable: {error} -- would fall back to regex NLU.")
     else:
         print(json.dumps(result, indent=2))
