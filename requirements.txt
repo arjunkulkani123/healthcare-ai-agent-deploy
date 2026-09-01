@@ -7,3 +7,5 @@ pillow>=10.3
 pytesseract>=0.3.10
 fastapi>=0.111
 uvicorn>=0.30
+anthropic>=0.40
+requests>=2.31
