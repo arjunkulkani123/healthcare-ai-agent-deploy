@@ -36,10 +36,6 @@ from graph import build_graph                                     # noqa: E402
 from astar import astar                                           # noqa: E402
 
 
-# Maps the Expert System's service categories onto the CSP module's
-# service vocabulary (the two were built independently, in different
-# steps of the project, so this is the small "adapter" between them --
-# a realistic integration detail worth mentioning in the viva).
 SERVICE_TO_CSP = {
     "Emergency": "Emergency",
     "Urgent_OPD": "OPD",
@@ -48,8 +44,6 @@ SERVICE_TO_CSP = {
     "Specialist_Consultation": "Diagnostic",
 }
 
-# Maps (hospital, CSP service) onto a node in the navigation graph
-# (ai/search/graph.py) so A* has a concrete destination to route to.
 NODE_MAP = {
     ("Govt_Hospital_A", "Emergency"): "Emergency_A",
     ("Govt_Hospital_A", "OPD"): "OPD_A",
@@ -61,27 +55,18 @@ NODE_MAP = {
     ("Govt_Hospital_B", "Diagnostic"): "Laboratory_B",
     ("Private_Clinic_C", "OPD"): "OPD_C",
     ("Private_Clinic_C", "Vaccination"): "OPD_C",
-    ("Private_Clinic_C", "Diagnostic"): "OPD_C",  # clinic has no separate lab node
+    ("Private_Clinic_C", "Diagnostic"): "OPD_C",
 }
 
 
 def handle_request(user_text: str) -> dict:
-    """
-    The main agent loop. Args: free-text request from the user.
-    Returns a dict with the full trace and final structured + text response.
-    """
     trace = []
 
-    # ---- 1. PERCEIVE: parse free text into structured facts ----
-    # Try the real LLM first (understands genuinely varied phrasing);
-    # fall back to the regex-based NLU if no API key is configured or
-    # the call fails for any reason -- the agent should never break
-    # just because the LLM layer is unavailable.
     nlu_result = extract_facts_with_llm(user_text)
     nlu_method = "LLM (Claude)"
     if nlu_result is None:
         nlu_result = extract_facts_from_text(user_text)
-        nlu_method = "regex pattern-matching (no API key configured)"
+        nlu_method = "regex pattern-matching (LLM unavailable -- see app logs for why)"
 
     expert_facts = nlu_result["expert_facts"]
     overrides = nlu_result["scheduling_overrides"]
@@ -89,7 +74,6 @@ def handle_request(user_text: str) -> dict:
     for a in nlu_result["assumptions"]:
         trace.append(f"Assumption made: {a}")
 
-    # ---- 2. REASON: classify urgency + service category ----
     expert_result = assess(expert_facts)
     trace.append(
         f"Classified request via Expert System (forward chaining): "
@@ -97,7 +81,6 @@ def handle_request(user_text: str) -> dict:
         f"urgency={expert_result['urgency_level'] or 'routine'}"
     )
 
-    # ---- 3. PLAN + ACT: solve appointment scheduling via CSP ----
     csp_service = SERVICE_TO_CSP.get(expert_result["recommended_service"], "OPD")
     patient_request = PatientRequest(
         service=csp_service,
@@ -127,7 +110,6 @@ def handle_request(user_text: str) -> dict:
         appointment_explanation = explain_appointment(appointment, patient_request)
         trace.append(f"Ranked {len(ranked)} feasible appointment(s), selected the best match")
 
-        # ---- 4. ACT: route to the chosen facility via A* ----
         goal_node = NODE_MAP.get((appointment["hospital"], csp_service))
         if goal_node:
             graph = build_graph()
@@ -139,7 +121,6 @@ def handle_request(user_text: str) -> dict:
     else:
         trace.append("No feasible appointment found within the given constraints")
 
-    # ---- 5. EXPLAIN: assemble the final natural-language response ----
     response_text = _build_response(expert_result, appointment, appointment_explanation, route_result)
 
     return {
