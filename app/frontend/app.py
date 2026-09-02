@@ -29,7 +29,10 @@ st.set_page_config(page_title="Healthcare Experience Agent", page_icon="\u2695",
 # ---------------------------------------------------------------------
 st.markdown(
     """
-    <style>
+        <style>
+        html, body, [data-testid="stAppViewContainer"], .stApp {
+            color-scheme: light !important;
+        }
         :root {
             --teal-900: #0b3d3a;
             --teal-700: #0f6b63;
