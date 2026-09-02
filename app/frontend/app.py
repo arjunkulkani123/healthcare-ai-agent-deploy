@@ -109,6 +109,26 @@ st.markdown(
             background: #ffffff;
             color: var(--ink) !important;
         }
+        /* The expander HEADER (the clickable bar itself) ships with its
+           own dark background by default, which none of the rules above
+           touch -- that's the solid black bar in the screenshot. Override
+           it explicitly so it matches the rest of the light theme. Covers
+           both the current Streamlit testid and the underlying <summary>
+           element for older/newer versions. */
+        [data-testid="stExpander"] summary,
+        [data-testid="stExpanderHeader"],
+        [data-testid="stExpander"] details {
+            background: #ffffff !important;
+            color: var(--ink) !important;
+        }
+        [data-testid="stExpander"] summary:hover,
+        [data-testid="stExpanderHeader"]:hover {
+            background: #fafaf7 !important;
+        }
+        [data-testid="stExpander"] summary svg,
+        [data-testid="stExpanderHeader"] svg {
+            fill: var(--ink) !important;
+        }
         [data-testid="stFileUploaderDropzone"] {
             background: #fafaf7 !important;
             border: 1px dashed #cfcfc7 !important;
