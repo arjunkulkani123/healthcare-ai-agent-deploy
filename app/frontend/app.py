@@ -139,6 +139,22 @@ st.markdown(
         [data-testid="stFileUploaderDropzoneInstructions"] svg {
             fill: var(--ink) !important;
         }
+        /* The "Upload" button inside the dropzone defaults to a solid
+           black fill with white text/icon -- switch it to a light gray
+           pill matching the rest of the light theme. */
+        [data-testid="stFileUploaderDropzone"] button {
+            background: #ececE6 !important;
+            border: none !important;
+            color: var(--ink) !important;
+        }
+        [data-testid="stFileUploaderDropzone"] button:hover {
+            background: #e0ddd4 !important;
+        }
+        [data-testid="stFileUploaderDropzone"] button svg,
+        [data-testid="stFileUploaderDropzone"] button p {
+            fill: var(--ink) !important;
+            color: var(--ink) !important;
+        }
     </style>
     """,
     unsafe_allow_html=True,
