@@ -78,6 +78,20 @@ st.markdown(
             padding-top: 0.7rem;
             margin-top: 0.9rem;
         }
+        /* Force readable text color on Streamlit's own widget labels,
+           markdown text, and expander headers -- these don't go through
+           our custom .result-card styling, so without this they can
+           inherit a very light default color that's hard to read
+           against our light background. */
+        [data-testid="stWidgetLabel"] p,
+        [data-testid="stWidgetLabel"] label,
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stExpander"] summary,
+        [data-testid="stExpander"] summary p,
+        .stTextArea label,
+        label {
+            color: var(--ink) !important;
+        }
     </style>
     """,
     unsafe_allow_html=True,
