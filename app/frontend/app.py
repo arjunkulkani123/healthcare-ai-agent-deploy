@@ -91,9 +91,30 @@ st.markdown(
         [data-testid="stMarkdownContainer"] p {
             color: var(--ink) !important;
         }
-        [data-testid="stButton"] p,
+               [data-testid="stButton"] p,
         [data-testid="stButton"] button p {
             color: #ffffff !important;
+        }
+        /* The expander body and file-upload dropzone use Streamlit's own
+           default styling (often a dark background), which our custom
+           light theme never touched -- fix them explicitly. */
+        [data-testid="stExpander"] {
+            background: #ffffff;
+            border-radius: 10px;
+        }
+        [data-testid="stExpanderDetails"] {
+            background: #ffffff;
+            color: var(--ink) !important;
+        }
+        [data-testid="stFileUploaderDropzone"] {
+            background: #fafaf7 !important;
+            border: 1px dashed #cfcfc7 !important;
+        }
+        [data-testid="stFileUploaderDropzone"] * {
+            color: var(--ink) !important;
+        }
+        [data-testid="stFileUploaderDropzoneInstructions"] svg {
+            fill: var(--ink) !important;
         }
     </style>
     """,
