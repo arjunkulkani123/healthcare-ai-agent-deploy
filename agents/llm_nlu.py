@@ -55,10 +55,6 @@ def extract_facts_with_llm(text: str) -> tuple:
 
     If successful: (dict, None)
     If it fails for any reason: (None, "a short explanation of why")
-
-    Returning the reason directly (instead of only printing to server
-    logs) means the calling UI can show it right on the page -- much
-    easier to debug than digging through deployment logs.
     """
     api_key = _get_api_key()
     if not api_key:
@@ -88,21 +84,9 @@ def extract_facts_with_llm(text: str) -> tuple:
             "expert_facts": parsed.get("expert_facts", {}),
             "scheduling_overrides": parsed.get("scheduling_overrides", {}),
             "assumptions": parsed.get("assumptions", []),
-<<<<<<< HEAD
-        }
-    except Exception as e:
-        # Any failure (bad key, rate limit, malformed JSON, network issue)
-        # -> return None, caller falls back to regex NLU. The app should
-        # never crash just because the LLM had a bad moment -- but we
-        # DO print the real reason so it's visible in deployment logs
-        # instead of silently and confusingly always blaming "no API key".
-        print(f"[llm_nlu] LLM call failed, falling back to regex NLU. Reason: {type(e).__name__}: {e}")
-        return None
-=======
         }, None
     except Exception as e:
         return None, f"{type(e).__name__}: {e}"
->>>>>>> 0d53639c683bd089bda08cec644118eb08cfc5d5
 
 
 def _get_api_key() -> str:
