@@ -205,16 +205,79 @@ st.markdown(
             color: var(--ink) !important;
             background: transparent !important;
         }
+        /* --- Colorful visual identity, added on top of the contrast
+           fixes above without touching any text-color safety rules --- */
+        .hero-banner {
+            background: linear-gradient(135deg, #0b3d3a 0%, #14919b 55%, #6a4c93 100%);
+            padding: 2rem 2rem 1.6rem 2rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 24px rgba(11, 61, 58, 0.25);
+        }
+        .hero-banner h1 {
+            color: #ffffff !important;
+            margin: 0 0 0.4rem 0 !important;
+            font-size: 2.3rem;
+        }
+        .hero-banner .subtitle {
+            color: #eaf6f5 !important;
+            font-size: 1.05rem;
+            margin: 0 !important;
+        }
+        [data-testid="stButton"] button {
+            background: linear-gradient(135deg, #0b3d3a 0%, #14919b 100%) !important;
+            border: none !important;
+            border-radius: 8px !important;
+            box-shadow: 0 2px 6px rgba(11, 61, 58, 0.2);
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        [data-testid="stButton"] button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 14px rgba(20, 145, 155, 0.35);
+        }
+        [data-testid="stButton"] button[kind="primary"] {
+            background: linear-gradient(135deg, #d64545 0%, #f2994a 100%) !important;
+        }
+        .result-card {
+            box-shadow: 0 3px 10px rgba(11, 61, 58, 0.08);
+            border-left: 5px solid var(--teal-500) !important;
+        }
+        .result-card.card-appointment {
+            border-left-color: #f2994a !important;
+        }
+        .result-card.card-route {
+            border-left-color: #6a4c93 !important;
+        }
+        [data-testid="stTabs"] [data-baseweb="tab-list"] {
+            gap: 6px;
+        }
+        [data-testid="stTabs"] button[data-baseweb="tab"] {
+            background: #ffffff;
+            border-radius: 8px 8px 0 0;
+            border: 1px solid #e2e2dc;
+        }
+        [data-testid="stTabs"] button[aria-selected="true"] {
+            background: linear-gradient(135deg, #14919b, #0b3d3a) !important;
+            border: none !important;
+        }
+        [data-testid="stTabs"] button[aria-selected="true"] p {
+            color: #ffffff !important;
+        }
+        .badge-high { box-shadow: 0 1px 4px rgba(156, 43, 38, 0.25); }
+        .badge-medium { box-shadow: 0 1px 4px rgba(138, 94, 16, 0.25); }
+        .badge-routine { box-shadow: 0 1px 4px rgba(31, 107, 70, 0.25); }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-st.markdown("# Healthcare Experience Agent")
 st.markdown(
+    '<div class="hero-banner">'
+    '<h1>\u2695 Healthcare Experience Agent</h1>'
     '<p class="subtitle">An agentic AI system combining search, constraint '
     "satisfaction, expert-system reasoning, and machine learning to "
-    "navigate healthcare services.</p>",
+    "navigate healthcare services.</p>"
+    '</div>',
     unsafe_allow_html=True,
 )
 
@@ -290,7 +353,7 @@ with tab_assistant:
             if result["appointment"]:
                 appt = result["appointment"]
                 st.markdown(
-                    '<div class="result-card">'
+                    '<div class="result-card card-appointment">'
                     '<h4 style="margin-top:0;">Appointment</h4>'
                     '<p><b>' + appt['doctor'] + '</b> at <b>' + appt['hospital'] + '</b><br>'
                     + appt['date'] + ' at ' + appt['time'] + '</p>'
@@ -302,7 +365,7 @@ with tab_assistant:
                     route = result["route"]
                     path_str = " &rarr; ".join(route["path"])
                     st.markdown(
-                        '<div class="result-card">'
+                        '<div class="result-card card-route">'
                         '<h4 style="margin-top:0;">Suggested Route</h4>'
                         '<p>' + path_str + '</p>'
                         '<p style="color:#5a6b66; font-size:0.85rem;">'
