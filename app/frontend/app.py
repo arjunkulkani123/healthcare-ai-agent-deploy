@@ -190,15 +190,20 @@ st.markdown(
         }
         /* st.json() and st.code() use JS libraries (react-json-view,
            Pygments-style highlighting) that set their own inline color
-           per token -- e.g. JSON keys get one inline color, values
-           another; code syntax highlighting colors words vs numbers
-           differently. Inline styles normally beat external CSS, but
-           an !important external rule DOES win over a plain inline
-           style, which is what forces all of it to our ink color here. */
+           per token AND their own dark background by default. Forcing
+           only the text color (previous attempt) left dark text on a
+           still-dark background -- invisible. Fixing both together. */
+        [data-testid="stJson"],
+        [data-testid="stCode"],
+        pre {
+            background: #ffffff !important;
+            border: 1px solid #e2e2dc !important;
+        }
         [data-testid="stJson"] *,
         [data-testid="stCode"] *,
         pre, code, pre *, code * {
             color: var(--ink) !important;
+            background: transparent !important;
         }
     </style>
     """,
