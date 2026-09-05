@@ -50,7 +50,16 @@ st.markdown(
             --ink: #1c2521;
         }
         .stApp { background-color: var(--cream); }
-        h1, h2, h3 { color: var(--teal-900) !important; font-family: 'Georgia', serif; }
+        h1, h2, h3, h4, h5, h6 { color: var(--teal-900) !important; font-family: 'Georgia', serif; }
+        button, [data-testid="stButton"], [data-testid="stButton"] button {
+            color-scheme: light !important;
+        }
+        [data-testid="stButton"] button {
+            color: #ffffff !important;
+        }
+        [data-testid="stButton"] button * {
+            color: #ffffff !important;
+        }
         .subtitle { color: #5a6b66; font-size: 1.05rem; margin-top: -0.6rem; margin-bottom: 1.5rem; }
         .trace-step {
             padding: 0.5rem 0.8rem;
@@ -153,6 +162,17 @@ st.markdown(
         [data-testid="stDataFrame"] {
             border-radius: 8px;
             overflow: hidden;
+        }
+        [data-testid="stTable"] table {
+            color: var(--ink) !important;
+            background: #ffffff !important;
+        }
+        [data-testid="stTable"] th {
+            color: var(--teal-900) !important;
+            background: #f0efe9 !important;
+        }
+        [data-testid="stTable"] td {
+            color: var(--ink) !important;
         }
     </style>
     """,
@@ -337,7 +357,7 @@ with tab_search:
                 "Cost (km)": r["cost"],
                 "Time (ms)": r["time_taken_ms"],
             })
-        st.dataframe(table_data, use_container_width=True, hide_index=True)
+        st.table(table_data)
 
         fig, ax = plt.subplots(figsize=(8, 6))
         for node, coords in NODE_COORDS.items():
@@ -417,12 +437,11 @@ with tab_csp:
         smart_result = smart_backtracking(variables, domains, constraints, limit=10)
 
         st.markdown("#### Naive vs Smart Backtracking")
-        st.dataframe(
+        st.table(
             [
                 {"Method": "Naive Backtracking", "Nodes Expanded": naive_result["nodes_expanded"], "Time (ms)": naive_result["time_taken_ms"]},
                 {"Method": "Smart (MRV + Forward Checking)", "Nodes Expanded": smart_result["nodes_expanded"], "Time (ms)": smart_result["time_taken_ms"]},
             ],
-            use_container_width=True, hide_index=True,
         )
 
         solutions = smart_result["solutions"]
@@ -501,7 +520,7 @@ with tab_ml:
                 "Avg Wait (min)": profile["waiting_time_minutes"],
                 "Avg Satisfaction": profile["satisfaction_score"],
             })
-        st.dataframe(table_data, use_container_width=True, hide_index=True)
+        st.table(table_data)
 
         fig, ax = plt.subplots(figsize=(6, 5))
         colors = ["#14919b", "#9c2b26", "#8a5e10", "#1f6b46"]
