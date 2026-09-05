@@ -50,16 +50,17 @@ st.markdown(
             --ink: #1c2521;
         }
         .stApp { background-color: var(--cream); }
+        /* Base default: color everything inside the app dark-ink by
+           default (no !important here, so specific rules below like
+           badges/buttons/headers can still override it). This is a
+           broad safety net covering st.text(), st.caption(), st.code(),
+           st.metric(), st.warning(), plain markdown, and anything else
+           we haven't individually targeted -- fixing them all in one
+           shot instead of chasing each widget type separately. */
+        [data-testid="stAppViewContainer"] * {
+            color: var(--ink);
+        }
         h1, h2, h3, h4, h5, h6 { color: var(--teal-900) !important; font-family: 'Georgia', serif; }
-        button, [data-testid="stButton"], [data-testid="stButton"] button {
-            color-scheme: light !important;
-        }
-        [data-testid="stButton"] button {
-            color: #ffffff !important;
-        }
-        [data-testid="stButton"] button * {
-            color: #ffffff !important;
-        }
         .subtitle { color: #5a6b66; font-size: 1.05rem; margin-top: -0.6rem; margin-bottom: 1.5rem; }
         .trace-step {
             padding: 0.5rem 0.8rem;
@@ -173,6 +174,19 @@ st.markdown(
         }
         [data-testid="stTable"] td {
             color: var(--ink) !important;
+        }
+        /* Placed LAST and deliberately: an earlier button-color rule
+           had the same CSS specificity as the markdown-container ink
+           rule above, and since both use !important, the LATER one in
+           the file wins regardless of intent -- that's why button text
+           kept losing to the dark ink color. Putting this fix last
+           guarantees it wins the tie. */
+        button, [data-testid="stButton"], [data-testid="stButton"] button {
+            color-scheme: light !important;
+        }
+        [data-testid="stButton"] button,
+        [data-testid="stButton"] button * {
+            color: #ffffff !important;
         }
     </style>
     """,
@@ -582,7 +596,9 @@ with tab_kb:
             st.caption("In the live agent, these become the next follow-up question asked to the user.")
 
         st.markdown("#### Reasoning trace")
+        trace_lines = []
         for step in result["trace"]:
-            indent = "&nbsp;&nbsp;&nbsp;&nbsp;" * step["depth"]
+            indent = "    " * step["depth"]
             icon = "\u2713" if step["result"] else "\u2717"
-            st.markdown(indent + icon + " " + str(step["goal"]) + " -- " + step["reason"], unsafe_allow_html=True)
+            trace_lines.append(indent + icon + " " + str(step["goal"]) + " -- " + step["reason"])
+        st.code("\n".join(trace_lines), language=None)
