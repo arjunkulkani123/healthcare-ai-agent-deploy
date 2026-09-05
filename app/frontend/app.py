@@ -285,9 +285,15 @@ st.markdown(
         [data-testid="stTextInput"] input,
         [data-testid="stTextArea"] textarea,
         [data-testid="stSlider"] div {
-            background-color: #ffffff !important;
+            background-color: #f0f7f6 !important;
             color: var(--ink) !important;
             color-scheme: light !important;
+        }
+        [data-baseweb="select"] > div,
+        [data-testid="stNumberInput"] > div,
+        [data-testid="stTextInput"] > div {
+            border: 1.5px solid #9fc8c4 !important;
+            border-radius: 8px !important;
         }
         [data-baseweb="popover"],
         [data-baseweb="popover"] *,
@@ -300,9 +306,19 @@ st.markdown(
             color: var(--ink) !important;
             color-scheme: light !important;
         }
+        [data-baseweb="popover"] {
+            border: 1.5px solid #9fc8c4 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 6px 16px rgba(11, 61, 58, 0.18) !important;
+        }
         [role="option"]:hover,
         ul[data-baseweb="menu"] li:hover {
-            background-color: #f0efe9 !important;
+            background-color: #cfece9 !important;
+            color: var(--teal-900) !important;
+        }
+        [role="option"][aria-selected="true"] {
+            background-color: #14919b !important;
+            color: #ffffff !important;
         }
     </style>
     """,
