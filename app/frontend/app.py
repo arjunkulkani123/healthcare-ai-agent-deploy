@@ -266,6 +266,44 @@ st.markdown(
         .badge-high { box-shadow: 0 1px 4px rgba(156, 43, 38, 0.25); }
         .badge-medium { box-shadow: 0 1px 4px rgba(138, 94, 16, 0.25); }
         .badge-routine { box-shadow: 0 1px 4px rgba(31, 107, 70, 0.25); }
+        /* Comprehensive fix for ALL input widgets (selectbox, number
+           input, slider, checkbox) whose native/BaseWeb rendering leaks
+           OS dark-mode styling. Dropdown option LISTS in particular
+           render via a "portal" appended outside our page's normal
+           container in the DOM, so a fix scoped to stAppViewContainer
+           never reaches them -- these selectors are deliberately global
+           (not scoped) so they still apply. */
+        [data-baseweb="select"],
+        [data-baseweb="select"] > div,
+        [data-baseweb="select"] div,
+        [data-baseweb="input"],
+        [data-baseweb="input"] input,
+        [data-baseweb="base-input"],
+        [data-testid="stSelectbox"] div,
+        [data-testid="stNumberInput"] div,
+        [data-testid="stNumberInput"] input,
+        [data-testid="stTextInput"] input,
+        [data-testid="stTextArea"] textarea,
+        [data-testid="stSlider"] div {
+            background-color: #ffffff !important;
+            color: var(--ink) !important;
+            color-scheme: light !important;
+        }
+        [data-baseweb="popover"],
+        [data-baseweb="popover"] *,
+        [data-baseweb="menu"],
+        [data-baseweb="menu"] *,
+        [role="listbox"],
+        [role="listbox"] *,
+        ul[data-baseweb="menu"] li {
+            background-color: #ffffff !important;
+            color: var(--ink) !important;
+            color-scheme: light !important;
+        }
+        [role="option"]:hover,
+        ul[data-baseweb="menu"] li:hover {
+            background-color: #f0efe9 !important;
+        }
     </style>
     """,
     unsafe_allow_html=True,
