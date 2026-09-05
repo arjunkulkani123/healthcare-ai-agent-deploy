@@ -90,15 +90,6 @@ st.markdown(
             padding-top: 0.7rem;
             margin-top: 0.9rem;
         }
-<<<<<<< HEAD
-=======
-               /* Force readable text color on Streamlit's own widget labels,
-           markdown text, and expander headers -- these don't go through
-           our custom .result-card styling, so without this they can
-           inherit a very light default color that's hard to read
-           against our light background. Deliberately excludes .stButton
-           so button text keeps its own (white-on-dark) styling. */
->>>>>>> 0d53639c683bd089bda08cec644118eb08cfc5d5
         [data-testid="stWidgetLabel"] p,
         [data-testid="stWidgetLabel"] label,
         [data-testid="stExpander"] summary,
@@ -106,20 +97,10 @@ st.markdown(
         [data-testid="stMarkdownContainer"] p {
             color: var(--ink) !important;
         }
-<<<<<<< HEAD
         [data-testid="stButton"] p,
         [data-testid="stButton"] button p {
             color: #ffffff !important;
         }
-=======
-               [data-testid="stButton"] p,
-        [data-testid="stButton"] button p {
-            color: #ffffff !important;
-        }
-        /* The expander body and file-upload dropzone use Streamlit's own
-           default styling (often a dark background), which our custom
-           light theme never touched -- fix them explicitly. */
->>>>>>> 0d53639c683bd089bda08cec644118eb08cfc5d5
         [data-testid="stExpander"] {
             background: #ffffff;
             border-radius: 10px;
@@ -128,15 +109,6 @@ st.markdown(
             background: #ffffff;
             color: var(--ink) !important;
         }
-<<<<<<< HEAD
-=======
-        /* The expander HEADER (the clickable bar itself) ships with its
-           own dark background by default, which none of the rules above
-           touch -- that's the solid black bar in the screenshot. Override
-           it explicitly so it matches the rest of the light theme. Covers
-           both the current Streamlit testid and the underlying <summary>
-           element for older/newer versions. */
->>>>>>> 0d53639c683bd089bda08cec644118eb08cfc5d5
         [data-testid="stExpander"] summary,
         [data-testid="stExpanderHeader"],
         [data-testid="stExpander"] details {
@@ -161,12 +133,6 @@ st.markdown(
         [data-testid="stFileUploaderDropzoneInstructions"] svg {
             fill: var(--ink) !important;
         }
-<<<<<<< HEAD
-=======
-        /* The "Upload" button inside the dropzone defaults to a solid
-           black fill with white text/icon -- switch it to a light gray
-           pill matching the rest of the light theme. */
->>>>>>> 0d53639c683bd089bda08cec644118eb08cfc5d5
         [data-testid="stFileUploaderDropzone"] button {
             background: #ececE6 !important;
             border: none !important;
@@ -180,7 +146,6 @@ st.markdown(
             fill: var(--ink) !important;
             color: var(--ink) !important;
         }
-<<<<<<< HEAD
         [data-testid="stTabs"] button p {
             color: var(--ink) !important;
             font-weight: 600;
@@ -189,8 +154,6 @@ st.markdown(
             border-radius: 8px;
             overflow: hidden;
         }
-=======
->>>>>>> 0d53639c683bd089bda08cec644118eb08cfc5d5
     </style>
     """,
     unsafe_allow_html=True,
