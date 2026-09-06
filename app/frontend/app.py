@@ -377,11 +377,26 @@ with tab_assistant:
         for label, text in EXAMPLES.items():
             st.button(label, use_container_width=True, on_click=_use_example, args=(text,), key="ex_" + label)
 
+    location_input = st.text_input(
+        "Your location (optional -- searches REAL nearby hospitals via Google Places)",
+        placeholder="e.g. Indore, Madhya Pradesh",
+        key="location_input",
+    )
+    st.caption(
+        "Leave blank to use the built-in demo facilities. If a Google Places "
+        "API key is configured, entering a real location searches ACTUAL "
+        "nearby hospitals (doctor schedules remain simulated, since no "
+        "public API for real appointment availability exists)."
+    )
+
     run_clicked = st.button("Ask Agent", type="primary")
 
     if run_clicked and st.session_state.get("user_text", "").strip():
         with st.spinner("Reasoning through the request..."):
-            result = handle_request(st.session_state["user_text"])
+            result = handle_request(st.session_state["user_text"], location=location_input)
+
+        if result.get("using_real_data"):
+            st.success("Using REAL nearby facility data for this request.", icon="\U0001F4CD")
 
         left, right = st.columns([1, 1.4])
 
