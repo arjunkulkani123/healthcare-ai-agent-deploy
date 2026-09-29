@@ -138,6 +138,28 @@ st.markdown(
             color: var(--ink) !important;
             -webkit-text-fill-color: var(--ink) !important;
         }
+        /* Text area: force a stable light surface and readable selection/caret. */
+        [data-testid="stTextArea"] textarea,
+        [data-baseweb="textarea"] textarea {
+            background: #ffffff !important;
+            color: var(--ink) !important;
+            -webkit-text-fill-color: var(--ink) !important;
+            caret-color: var(--teal-900) !important;
+            border-color: #bfc7c2 !important;
+            opacity: 1 !important;
+        }
+        [data-testid="stTextArea"] textarea:focus,
+        [data-baseweb="textarea"] textarea:focus {
+            background: #ffffff !important;
+            color: var(--ink) !important;
+            -webkit-text-fill-color: var(--ink) !important;
+        }
+        [data-testid="stTextArea"] textarea::selection,
+        [data-baseweb="textarea"] textarea::selection {
+            background: #2563eb !important;
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
         input::placeholder, textarea::placeholder {
             color: #6b7974 !important;
             opacity: 1 !important;
