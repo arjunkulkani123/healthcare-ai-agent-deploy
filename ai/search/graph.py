@@ -13,6 +13,14 @@ from any node to the goal is always <= the true remaining path cost
 ADMISSIBLE and CONSISTENT. This is what makes A* optimal here, and it's
 a clean thing to say out loud in a viva.
 
+UPGRADE (multi-route version):
+The original graph was a pure TREE (one and only one path between any two
+places), so every algorithm returned the same route and "alternative routes"
+were impossible. Three road JUNCTIONS and several cross-roads were added so
+the road network now has CYCLES -> several different routes exist between the
+same two places (like Google Maps). Each road also has a TRAFFIC factor, so the
+shortest route (km) and the fastest route (minutes) can be different.
+
 Structure modelled:
 
 Home
@@ -57,6 +65,11 @@ NODE_COORDS = {
     "Registration_C": (3.3, 4.3),
     "OPD_C": (3.7, 4.7),
     "Pharmacy_C": (4.0, 4.4),
+
+    # Road junctions (added for multi-route support)
+    "Junction_1": (2.0, 6.0),
+    "Junction_2": (-4.0, 2.0),
+    "Junction_3": (8.0, 4.0),
 }
 
 # ---------------------------------------------------------------------
@@ -84,7 +97,31 @@ RAW_EDGES = [
     ("Private_Clinic_C", "Registration_C"),
     ("Registration_C", "OPD_C"),
     ("OPD_C", "Pharmacy_C"),
+
+    # Cross-roads through the junctions (create alternative routes)
+    ("Home", "Junction_1"),
+    ("Private_Clinic_C", "Junction_1"),
+    ("Junction_1", "Govt_Hospital_A"),
+    ("Home", "Junction_2"),
+    ("Junction_2", "Govt_Hospital_B"),
+    ("Junction_2", "Private_Clinic_C"),
+    ("Home", "Junction_3"),
+    ("Junction_3", "Govt_Hospital_A"),
+    ("Junction_3", "Private_Clinic_C"),
 ]
+
+# ---------------------------------------------------------------------
+# 2b. Traffic (congestion) multiplier per road. 1.0 = free flow.
+#     Anything not listed is free flow. Direct roads are the busy ones.
+# ---------------------------------------------------------------------
+TRAFFIC = {
+    frozenset(("Home", "Govt_Hospital_A")): 2.2,
+    frozenset(("Home", "Govt_Hospital_B")): 1.8,
+    frozenset(("Home", "Private_Clinic_C")): 1.4,
+    frozenset(("Junction_3", "Govt_Hospital_A")): 1.5,
+}
+
+BASE_SPEED_KMPH = 30.0   # free-flow city speed
 
 
 def euclidean(node_a: str, node_b: str) -> float:
@@ -94,15 +131,27 @@ def euclidean(node_a: str, node_b: str) -> float:
     return round(math.hypot(ax - bx, ay - by), 3)
 
 
-def build_graph() -> dict:
+def travel_time_min(node_a: str, node_b: str) -> float:
+    """Travel time in minutes on the road a-b, including traffic."""
+    km = euclidean(node_a, node_b)
+    factor = TRAFFIC.get(frozenset((node_a, node_b)), 1.0)
+    return round(km / BASE_SPEED_KMPH * 60.0 * factor, 3)
+
+
+def build_graph(weight: str = "distance") -> dict:
     """
     Returns an adjacency-list graph:
         { node: [(neighbor, weight), ...], ... }
-    Weight = real distance between the two nodes (km).
+
+    weight="distance" (default, unchanged behaviour): edge weight = km.
+    weight="time"                                   : edge weight = minutes
+                                                      (distance + traffic).
     """
+    if weight not in ("distance", "time"):
+        raise ValueError("weight must be 'distance' or 'time'")
     graph = {node: [] for node in NODE_COORDS}
     for a, b in RAW_EDGES:
-        w = euclidean(a, b)
+        w = euclidean(a, b) if weight == "distance" else travel_time_min(a, b)
         graph[a].append((b, w))
         graph[b].append((a, w))
     return graph
