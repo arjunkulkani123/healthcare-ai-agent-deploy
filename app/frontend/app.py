@@ -49,10 +49,25 @@ st.markdown(
             --teal-500: #14919b;
             --cream: #f7f5f0;
             --ink: #1c2521;
+            --muted: #52635d;
+            --border: #d9ddd7;
         }
         .stApp { background-color: var(--cream); }
-        h1, h2, h3 { color: var(--teal-900) !important; font-family: 'Georgia', serif; }
-        .subtitle { color: #5a6b66; font-size: 1.05rem; margin-top: -0.6rem; margin-bottom: 1.5rem; }
+
+        /* Global readable typography */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--teal-900) !important;
+            font-family: 'Georgia', serif;
+        }
+        p, li, label, small, span, div {
+            text-rendering: optimizeLegibility;
+        }
+        .subtitle {
+            color: var(--muted) !important;
+            font-size: 1.05rem;
+            margin-top: -0.6rem;
+            margin-bottom: 1.5rem;
+        }
         .trace-step {
             padding: 0.5rem 0.8rem;
             border-left: 3px solid var(--teal-500);
@@ -60,7 +75,7 @@ st.markdown(
             margin-bottom: 0.4rem;
             border-radius: 0 6px 6px 0;
             font-size: 0.92rem;
-            color: var(--ink);
+            color: var(--ink) !important;
         }
         .result-card {
             background: #ffffff;
@@ -68,9 +83,9 @@ st.markdown(
             border-radius: 10px;
             padding: 1.3rem 1.5rem;
             margin-bottom: 1rem;
-            color: var(--ink);
+            color: var(--ink) !important;
         }
-        .result-card p, .result-card h4, .result-card li {
+        .result-card p, .result-card h4, .result-card li, .result-card span {
             color: var(--ink) !important;
         }
         .badge {
@@ -81,57 +96,67 @@ st.markdown(
             font-weight: 600;
             margin-right: 0.4rem;
         }
-        .badge-high { background: #fde2e1; color: #9c2b26; }
-        .badge-medium { background: #fdf0d0; color: #8a5e10; }
-        .badge-routine { background: #dcf0e6; color: #1f6b46; }
+        .badge-high { background: #fde2e1; color: #8f211c !important; }
+        .badge-medium { background: #fdf0d0; color: #76500a !important; }
+        .badge-routine { background: #dcf0e6; color: #17583a !important; }
         .scope-note {
             font-size: 0.85rem;
-            color: #78877f;
+            color: #5f706a !important;
             border-top: 1px solid #e2e2dc;
             padding-top: 0.7rem;
             margin-top: 0.9rem;
         }
-               /* Force readable text color on Streamlit's own widget labels,
-           markdown text, and expander headers -- these don't go through
-           our custom .result-card styling, so without this they can
-           inherit a very light default color that's hard to read
-           against our light background. Deliberately excludes .stButton
-           so button text keeps its own (white-on-dark) styling. */
+
+        /* Streamlit widget labels, captions and help text */
         [data-testid="stWidgetLabel"] p,
         [data-testid="stWidgetLabel"] label,
-        [data-testid="stExpander"] summary,
-        [data-testid="stExpander"] summary p,
-        [data-testid="stMarkdownContainer"] p {
+        [data-testid="stWidgetLabel"] div,
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stMarkdownContainer"] li,
+        [data-testid="stCaptionContainer"],
+        [data-testid="stCaptionContainer"] p,
+        [data-testid="stAlert"] p,
+        [data-testid="stMetricLabel"] p,
+        [data-testid="stMetricValue"],
+        [data-testid="stMetricDelta"],
+        .stCaption,
+        .stMarkdown,
+        .stText {
             color: var(--ink) !important;
         }
-        [data-testid="stButton"] p,
-        [data-testid="stButton"] button p {
-            color: #ffffff !important;
+        [data-testid="stCaptionContainer"],
+        .stCaption { color: var(--muted) !important; }
+
+        /* Text entered/displayed inside inputs and BaseWeb controls */
+        [data-baseweb="input"] input,
+        [data-baseweb="textarea"] textarea,
+        [data-baseweb="select"] *,
+        [data-baseweb="select"] input,
+        [data-testid="stTextInput"] input,
+        [data-testid="stTextArea"] textarea,
+        [data-testid="stNumberInput"] input {
+            color: var(--ink) !important;
+            -webkit-text-fill-color: var(--ink) !important;
         }
-               [data-testid="stButton"] p,
-        [data-testid="stButton"] button p {
-            color: #ffffff !important;
+        input::placeholder, textarea::placeholder {
+            color: #6b7974 !important;
+            opacity: 1 !important;
         }
-        /* The expander body and file-upload dropzone use Streamlit's own
-           default styling (often a dark background), which our custom
-           light theme never touched -- fix them explicitly. */
-        [data-testid="stExpander"] {
-            background: #ffffff;
-            border-radius: 10px;
-        }
-        [data-testid="stExpanderDetails"] {
-            background: #ffffff;
+
+        /* Dropdown menus/popovers */
+        [role="listbox"], [role="option"],
+        [data-baseweb="popover"], [data-baseweb="menu"] {
+            background: #ffffff !important;
             color: var(--ink) !important;
         }
-        /* The expander HEADER (the clickable bar itself) ships with its
-           own dark background by default, which none of the rules above
-           touch -- that's the solid black bar in the screenshot. Override
-           it explicitly so it matches the rest of the light theme. Covers
-           both the current Streamlit testid and the underlying <summary>
-           element for older/newer versions. */
+        [role="option"] * { color: var(--ink) !important; }
+
+        /* Expanders and uploaders */
+        [data-testid="stExpander"],
+        [data-testid="stExpanderDetails"],
+        [data-testid="stExpander"] details,
         [data-testid="stExpander"] summary,
-        [data-testid="stExpanderHeader"],
-        [data-testid="stExpander"] details {
+        [data-testid="stExpanderHeader"] {
             background: #ffffff !important;
             color: var(--ink) !important;
         }
@@ -144,21 +169,15 @@ st.markdown(
             fill: var(--ink) !important;
         }
         [data-testid="stFileUploaderDropzone"] {
-            background: #fafaf7 !important;
-            border: 1px dashed #cfcfc7 !important;
+            background: #ffffff !important;
+            border: 1px dashed #bfc7c2 !important;
         }
         [data-testid="stFileUploaderDropzone"] * {
             color: var(--ink) !important;
         }
-        [data-testid="stFileUploaderDropzoneInstructions"] svg {
-            fill: var(--ink) !important;
-        }
-        /* The "Upload" button inside the dropzone defaults to a solid
-           black fill with white text/icon -- switch it to a light gray
-           pill matching the rest of the light theme. */
         [data-testid="stFileUploaderDropzone"] button {
-            background: #ececE6 !important;
-            border: none !important;
+            background: #ecece6 !important;
+            border: 1px solid #d6d7d0 !important;
             color: var(--ink) !important;
         }
         [data-testid="stFileUploaderDropzone"] button:hover {
@@ -169,10 +188,28 @@ st.markdown(
             fill: var(--ink) !important;
             color: var(--ink) !important;
         }
+
+        /* Tabs */
+        [data-testid="stTabs"] button,
         [data-testid="stTabs"] button p {
             color: var(--ink) !important;
             font-weight: 600;
         }
+        [data-testid="stTabs"] button[aria-selected="true"],
+        [data-testid="stTabs"] button[aria-selected="true"] p {
+            color: var(--teal-700) !important;
+        }
+
+        /* Buttons: keep strong contrast */
+        [data-testid="stButton"] button {
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+        [data-testid="stButton"] button p,
+        [data-testid="stButton"] button span {
+            color: #ffffff !important;
+        }
+
         [data-testid="stDataFrame"] {
             border-radius: 8px;
             overflow: hidden;
