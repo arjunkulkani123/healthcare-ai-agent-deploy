@@ -72,3 +72,4 @@ healthcare-ai-agent/
 pip install -r requirements.txt
 streamlit run app/frontend/app.py
 ```
+\n\n## Validation\n\nRun the basic project smoke checks from the project root:\n\n```bash\npy -m unittest discover -s tests\n```\n\nThe routing graph and travel speeds are synthetic prototype data, not live road or traffic data.\n
